@@ -29,4 +29,8 @@ impl Parser {
         }
         return result
     }
+
+    fn consume_whitespace(&mut self) {
+        self.consume_while(CharExt::is_whitespace);
+    }
 }
