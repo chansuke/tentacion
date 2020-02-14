@@ -33,4 +33,8 @@ impl Parser {
     fn consume_whitespace(&mut self) {
         self.consume_while(CharExt::is_whitespace);
     }
+
+    fn parse_tag_name(&mut self) -> String {
+        self.consume_while(CharExt::is_whitespace);
+    }
 }
