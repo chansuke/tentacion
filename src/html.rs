@@ -33,4 +33,22 @@ impl Parser {
     fn consume_whitespace(&mut self) {
         self.consume_while(CharExt::is_whitespace);
     }
+
+    fn parse_tag_name(&mut self) -> String {
+        self.consume_while(CharExt::is_whitespace);
+    }
+
+    fn parse_node(&mut self) -> dom::Node {
+        match self.next_char() {
+            '<' => self.parse_element(),
+            _   => self.parse_text()
+        }
+    }
+
+    fn parse_tag_name(&mut self) -> String {
+        self.consume_while(|c| match c {
+            'a'...'z' | 'A'...'Z' | '0'...'9' => true,
+            _ => false
+        })
+    }
 }
