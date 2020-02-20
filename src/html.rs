@@ -1,3 +1,16 @@
+use dom;
+use std::collections::HashMap;
+
+pub fn parse(source: String) -> dom::Node {
+    let mut nodes = Parser { pos: 0, input: source }.parse_nodes();
+
+    if nodes.len() == 1 {
+        nodes.swap_remove(0)
+    } else {
+        dom::elem("html".to_string(), HashMap::new(), nodes)
+    }
+}
+
 struct Parser {
     pos: usize, // An index of the character
     input: String,
@@ -119,13 +132,4 @@ impl Parser {
         return nodes;
     }
 
-    pub fn parse(source: String) -> dom::Node {
-        let mut nodes = Parser { pos: 0, input: source }.parse_nodes();
-
-        if nodes.len() == 1 {
-            nodes.swap_remove(0)
-        } else {
-            dom::elem("html".to_string(), HashMap::new(), nodes)
-        }
-    }
 }

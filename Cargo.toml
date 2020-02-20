@@ -5,3 +5,4 @@ authors = ["chansuke <moonset20@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+getopts = "0.2"
