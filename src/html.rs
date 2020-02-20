@@ -7,7 +7,7 @@ pub fn parse(source: String) -> dom::Node {
         input: source,
     }
     .parse_nodes();
-
+  
     if nodes.len() == 1 {
         nodes.swap_remove(0)
     } else {
