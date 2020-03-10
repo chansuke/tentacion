@@ -38,3 +38,16 @@ pub fn elem(name: String, attr: Attr, children: Vec<Node>) -> Node {
         }),
     }
 }
+
+impl ElementData {
+    pub fn id(&self) -> Option<&String> {
+        self.attributes.get("id")
+    }
+
+    pub fn classes(&self) -> HashSet<&str> {
+        match self.attributes.get("class") {
+            Some(classlist) => classlist.split(' ').collect(),
+            None => HashSet::new(),
+        }
+    }
+}
