@@ -45,29 +45,37 @@ fn match_rule<'a>(elem: &ElementData, rule: &'a Rule) -> Option<MatchedRule<'a>>
 }
 
 fn matching_rules<'a>(elem: &ElementData, stylesheet: &'a Stylesheet) -> Vec<MatchedRule<'a>> {
-  stylesheet.rules.iter().filter_map(|rule| match_rule(elem, rule)).collect()
+    stylesheet
+        .rules
+        .iter()
+        .filter_map(|rule| match_rule(elem, rule))
+        .collect()
 }
 
 fn specified_values(elem: &ElementData, stylesheet: &Stylesheet) -> PropertyMap {
-  let mut values = HashMap::new();
-  let mut rules = matching_rules(elem, stylesheet);
+    let mut values = HashMap::new();
+    let mut rules = matching_rules(elem, stylesheet);
 
-  rules.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
-  for (_, rule) in rules {
-      for declaration in &rule.declarations {
-          values.insert(declaration.name.clone(), declaration.value.clone());
-      }
-  }
-  return values;
+    rules.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
+    for (_, rule) in rules {
+        for declaration in &rule.declarations {
+            values.insert(declaration.name.clone(), declaration.value.clone());
+        }
+    }
+    return values;
 }
 
 pub fn style_tree<'a>(root: &'a Node, stylesheet: &'a Stylesheet) -> StyledNode<'a> {
-  StyledNode {
-      node: root,
-      specified_values: match root.node_type {
-          Element(ref elem) => specified_values(elem, stylesheet),
-          Text(_) => HashMap::new()
-      },
-      children: root.children.iter().map(|child| style_tree(child, stylesheet)).collect(),
-  }
+    StyledNode {
+        node: root,
+        specified_values: match root.node_type {
+            Element(ref elem) => specified_values(elem, stylesheet),
+            Text(_) => HashMap::new(),
+        },
+        children: root
+            .children
+            .iter()
+            .map(|child| style_tree(child, stylesheet))
+            .collect(),
+    }
 }
