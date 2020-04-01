@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 //https://dom.spec.whatwg.org/#attr
 pub type Attr = HashMap<String, String>;
