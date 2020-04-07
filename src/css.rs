@@ -56,8 +56,13 @@ impl Selector {
 }
 
 pub fn parse(source: String) -> StyleSheet {
-    let mut parser = Parser { pos: 0, input: source };
-    StyleSheet { rules: parser.parse_rules() }
+    let mut parser = Parser {
+        pos: 0,
+        input: source,
+    };
+    StyleSheet {
+        rules: parser.parse_rules(),
+    }
 }
 
 struct Parser {
@@ -101,16 +106,18 @@ impl Parser {
         }
     }
 
-
     fn parse_selectors(&mut self) -> Vec<Selector> {
         let mut selectors = Vec::new();
         loop {
             selectors.push(Selector::Simple(self.parse_simple_selector()));
             self.consume_whitespace();
             match self.next_char() {
-                ',' => { self.consume_char(); self.consume_whitespace(); }
+                ',' => {
+                    self.consume_char();
+                    self.consume_whitespace();
+                }
                 '{' => break,
-                c => panic!("Unexpected character {} in selector list", c)
+                c => panic!("Unexpected character {} in selector list", c),
             }
         }
         selectors.sort_by(|a, b| b.specificity().cmp(&a.specificity()));
@@ -150,7 +157,7 @@ impl Parser {
         match self.next_char() {
             '0'...'9' => self.parse_length(),
             '#' => self.parse_color(),
-            _ => Value::Keyword(self.parse_identifier())
+            _ => Value::Keyword(self.parse_identifier()),
         }
     }
 
@@ -161,7 +168,7 @@ impl Parser {
     fn parse_float(&mut self) -> f32 {
         let s = self.consume_while(|c| match c {
             '0'...'9' | '.' => true,
-            _ => false
+            _ => false,
         });
         s.parse().unwrap()
     }
@@ -169,7 +176,7 @@ impl Parser {
     fn parse_unit(&mut self) -> Unit {
         match &*self.parse_identifier().to_ascii_lowercase() {
             "px" => Unit::Px,
-            _ => panic!("unrecognized unit")
+            _ => panic!("unrecognized unit"),
         }
     }
 
@@ -179,11 +186,12 @@ impl Parser {
             r: self.parse_hex_pair(),
             g: self.parse_hex_pair(),
             b: self.parse_hex_pair(),
-            a: 255 })
+            a: 255,
+        })
     }
 
     fn parse_hex_pair(&mut self) -> u8 {
-        let s = &self.input[self.pos .. self.pos + 2];
+        let s = &self.input[self.pos..self.pos + 2];
         self.pos += 2;
         u8::from_str_radix(s, 16).unwrap()
     }
@@ -197,7 +205,9 @@ impl Parser {
     }
 
     fn consume_while<F>(&mut self, test: F) -> String
-        where F: Fn(char) -> bool {
+    where
+        F: Fn(char) -> bool,
+    {
         let mut result = String::new();
         while !self.eof() && test(self.next_char()) {
             result.push(self.consume_char());
