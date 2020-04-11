@@ -16,20 +16,20 @@ pub enum Display {
 }
 
 impl StyledNode {
-  fn value(&self, name: &str) -> Option<Value> {
-      self.specified_values.get(name).map(|v| v.clone())
-  }
+    fn value(&self, name: &str) -> Option<Value> {
+        self.specified_values.get(name).map(|v| v.clone())
+    }
 
-  fn display(&self) -> Display {
-      match self.value("display") {
-          Some(Keyword(s)) => match &*s {
-              "block" => Display::Block,
-              "none" => Display::None,
-              _ => Display::Inline
-          },
-          _ => Display::Inline
-      }
-  }
+    fn display(&self) -> Display {
+        match self.value("display") {
+            Some(Keyword(s)) => match &*s {
+                "block" => Display::Block,
+                "none" => Display::None,
+                _ => Display::Inline,
+            },
+            _ => Display::Inline,
+        }
+    }
 }
 
 fn matches(elem: &ElementData, selector: &Selector) -> bool {
