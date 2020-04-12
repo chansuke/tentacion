@@ -5,9 +5,9 @@ pub type Attr = HashMap<String, String>;
 
 #[derive(Debug)]
 pub struct Node {
-    children: Vec<Node>,
+    pub children: Vec<Node>,
 
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug)]
@@ -18,8 +18,8 @@ pub enum NodeType {
 
 #[derive(Debug)]
 pub struct ElementData {
-    tag_name: String,
-    attributes: Attr,
+    pub tag_name: String,
+    pub attributes: Attr,
 }
 
 pub fn text(data: String) -> Node {
