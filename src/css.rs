@@ -1,39 +1,45 @@
 #[derive(Debug)]
-pub struct StyleSheet {
-    rules: Vec<Rule>,
+pub struct Stylesheet {
+    pub rules: Vec<Rule>,
 }
 
 #[derive(Debug)]
 pub struct Rule {
-    selectors: Vec<Selector>,
-    declarations: Vec<Declaration>,
+    pub selectors: Vec<Selector>,
+    pub declarations: Vec<Declaration>,
 }
 
+#[derive(Debug)]
 pub enum Selector {
     Simple(SimpleSelector),
 }
 
+#[derive(Debug)]
 pub struct SimpleSelector {
-    tag_name: Option<String>,
-    id: Option<String>,
-    class: Vec<String>,
+    pub tag_name: Option<String>,
+    pub id: Option<String>,
+    pub class: Vec<String>,
 }
 
+#[derive(Debug)]
 pub struct Declaration {
-    name: String,
-    value: Value,
+    pub name: String,
+    pub value: Value,
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Keyword(String),
-    Length(f32, Unit),
+    Length(f64, Unit),
     ColorValue(Color),
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Unit {
     Px,
 }
 
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Color {
     r: u8,
     g: u8,
@@ -55,12 +61,21 @@ impl Selector {
     }
 }
 
-pub fn parse(source: String) -> StyleSheet {
+impl Value {
+    pub fn to_px(&self) -> f64 {
+        match *self {
+            Value::Length(f, Unit::Px) => f,
+            _ => 0.0,
+        }
+    }
+}
+
+pub fn parse(source: String) -> Stylesheet {
     let mut parser = Parser {
         pos: 0,
         input: source,
     };
-    StyleSheet {
+    Stylesheet {
         rules: parser.parse_rules(),
     }
 }
@@ -97,6 +112,18 @@ impl Parser {
             }
         }
         return selector;
+    }
+
+    fn parse_rules(&mut self) -> Vec<Rule> {
+        let mut rules = Vec::new();
+        loop {
+            self.consume_whitespace();
+            if self.eof() {
+                break;
+            }
+            rules.push(self.parse_rule());
+        }
+        rules
     }
 
     fn parse_rule(&mut self) -> Rule {
@@ -155,7 +182,7 @@ impl Parser {
 
     fn parse_value(&mut self) -> Value {
         match self.next_char() {
-            '0'...'9' => self.parse_length(),
+            '0'..='9' => self.parse_length(),
             '#' => self.parse_color(),
             _ => Value::Keyword(self.parse_identifier()),
         }
@@ -165,9 +192,9 @@ impl Parser {
         Value::Length(self.parse_float(), self.parse_unit())
     }
 
-    fn parse_float(&mut self) -> f32 {
+    fn parse_float(&mut self) -> f64 {
         let s = self.consume_while(|c| match c {
-            '0'...'9' | '.' => true,
+            '0'..='9' | '.' => true,
             _ => false,
         });
         s.parse().unwrap()
@@ -229,5 +256,12 @@ impl Parser {
 
     fn eof(&self) -> bool {
         self.pos >= self.input.len()
+    }
+}
+
+fn valid_identifier_char(c: char) -> bool {
+    match c {
+        'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' => true,
+        _ => false,
     }
 }

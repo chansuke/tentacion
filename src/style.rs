@@ -1,11 +1,13 @@
+use crate::css::{Rule, Selector, SimpleSelector, Specificity, Stylesheet, Value};
+use crate::dom::{ElementData, Node, NodeType};
 use std::collections::HashMap;
 
-type PropertyMap = HashMap<String, Value>;
+pub type PropertyMap = HashMap<String, Value>;
 
-struct StyledNode<'a> {
-    node: &'a Node,
-    specified_values: PropertyMap,
-    children: Vec<StyledNode<'a>>,
+pub struct StyledNode<'a> {
+    pub node: &'a Node,
+    pub specified_values: PropertyMap,
+    pub children: Vec<StyledNode<'a>>,
 }
 
 #[derive(PartialEq)]
@@ -15,14 +17,19 @@ pub enum Display {
     None,
 }
 
-impl StyledNode {
-    fn value(&self, name: &str) -> Option<Value> {
+impl<'a> StyledNode<'a> {
+    pub fn value(&self, name: &str) -> Option<Value> {
         self.specified_values.get(name).map(|v| v.clone())
     }
 
-    fn display(&self) -> Display {
+    pub fn lookup(&self, name: &str, fallback_name: &str, default: &Value) -> Value {
+        self.value(name)
+            .unwrap_or_else(|| self.value(fallback_name).unwrap_or_else(|| default.clone()))
+    }
+
+    pub fn display(&self) -> Display {
         match self.value("display") {
-            Some(Keyword(s)) => match &*s {
+            Some(Value::Keyword(s)) => match &*s {
                 "block" => Display::Block,
                 "none" => Display::None,
                 _ => Display::Inline,
@@ -34,7 +41,7 @@ impl StyledNode {
 
 fn matches(elem: &ElementData, selector: &Selector) -> bool {
     match *selector {
-        Simple(ref simple_selector) => matches_simple_selector(elem, simple_selector),
+        Selector::Simple(ref simple_selector) => matches_simple_selector(elem, simple_selector),
     }
 }
 
@@ -93,8 +100,8 @@ pub fn style_tree<'a>(root: &'a Node, stylesheet: &'a Stylesheet) -> StyledNode<
     StyledNode {
         node: root,
         specified_values: match root.node_type {
-            Element(ref elem) => specified_values(elem, stylesheet),
-            Text(_) => HashMap::new(),
+            NodeType::Element(ref elem) => specified_values(elem, stylesheet),
+            NodeType::Text(_) => HashMap::new(),
         },
         children: root
             .children
