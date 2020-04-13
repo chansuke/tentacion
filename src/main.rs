@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
@@ -9,9 +8,6 @@ pub mod layout;
 pub mod style;
 
 fn main() {
-    let text = dom::text("Tentacion".to_string());
-    let elem = dom::elem("div".to_string(), HashMap::new(), vec![text]);
-
     /* HTML */
     let mut html_source = "".to_string();
     let mut options = OpenOptions::new();
