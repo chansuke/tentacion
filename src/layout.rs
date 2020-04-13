@@ -1,6 +1,6 @@
 use crate::css::Unit::Px;
 use crate::css::Value::{Keyword, Length};
-use crate::style::StyledNode;
+use crate::style::{Display, StyledNode};
 use std::default::Default;
 
 pub use self::BoxType::{AnonymousBlock, BlockNode, InlineNode};
@@ -71,19 +71,19 @@ pub fn layout_tree<'a>(
 
 fn build_layout_tree<'a>(style_node: &'a StyledNode<'a>) -> LayoutBox<'a> {
     let mut root = LayoutBox::new(match style_node.display() {
-        Block => BlockNode(style_node),
-        Inline => InlineNode(style_node),
-        DisplayNone => panic!("Root node has display: none."),
+        Display::Block => BlockNode(style_node),
+        Display::Inline => InlineNode(style_node),
+        Display::None => panic!("Root node has display: none."),
     });
 
     for child in &style_node.children {
         match child.display() {
-            Block => root.children.push(build_layout_tree(child)),
-            Inline => root
+            Display::Block => root.children.push(build_layout_tree(child)),
+            Display::Inline => root
                 .get_inline_container()
                 .children
                 .push(build_layout_tree(child)),
-            DisplayNone => {}
+            Display::None => {}
         }
     }
     return root;
