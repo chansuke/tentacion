@@ -27,6 +27,14 @@ fn main() {
         .ok()
         .expect("cannot read css file");
 
-    let stylesheet = html::parse(css_source);
+    let stylesheet = css::parse(css_source);
     println!("Stylesheet: {:?}: ", stylesheet);
+
+    let mut viewport: layout::Dimensions = ::std::default::Default::default();
+    viewport.content.width = 800.0;
+    viewport.content.height = 600.0;
+
+    let style_tree = style::style_tree(&root_node, &stylesheet);
+    let layout_tree = layout::layout_tree(&style_tree, viewport);
+    println!("{:?}", layout_tree);
 }

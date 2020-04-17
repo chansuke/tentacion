@@ -2,37 +2,38 @@ use crate::css::Unit::Px;
 use crate::css::Value::{Keyword, Length};
 use crate::style::{Display, StyledNode};
 use std::default::Default;
+use std::fmt;
 
 pub use self::BoxType::{AnonymousBlock, BlockNode, InlineNode};
 
 #[derive(Clone, Copy, Default, Debug)]
 pub struct Dimensions {
-    content: Rect,
-    padding: EdgeSizes,
-    border: EdgeSizes,
-    margin: EdgeSizes,
+    pub content: Rect,
+    pub padding: EdgeSizes,
+    pub border: EdgeSizes,
+    pub margin: EdgeSizes,
 }
 
 #[derive(Clone, Copy, Default, Debug)]
 pub struct Rect {
-    x: f64,
-    y: f64,
-    width: f64,
-    height: f64,
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
 }
 
 #[derive(Clone, Copy, Default, Debug)]
 pub struct EdgeSizes {
-    left: f64,
-    right: f64,
-    top: f64,
-    bottom: f64,
+    pub left: f64,
+    pub right: f64,
+    pub top: f64,
+    pub bottom: f64,
 }
 
 pub struct LayoutBox<'a> {
-    dimensions: Dimensions,
-    box_type: BoxType<'a>,
-    children: Vec<LayoutBox<'a>>,
+    pub dimensions: Dimensions,
+    pub box_type: BoxType<'a>,
+    pub children: Vec<LayoutBox<'a>>,
 }
 
 pub enum BoxType<'a> {
@@ -281,4 +282,14 @@ where
     I: Iterator<Item = f64>,
 {
     iter.fold(0., |a, b| a + b)
+}
+
+impl<'a> fmt::Debug for LayoutBox<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self.dimensions);
+        for child in &self.children {
+            write!(f, "{:?}", child);
+        }
+        Ok(())
+    }
 }
