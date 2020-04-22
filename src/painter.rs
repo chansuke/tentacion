@@ -1,10 +1,10 @@
-use css::Color;
-use layout::{LayoutBox, Rect};
+use crate::css::{Color, Value};
+use crate::layout::{AnonymousBlock, BlockNode, InlineNode, LayoutBox, Rect};
 
 pub struct Canvas {
-    pixels: Vec<Color>,
-    width: usize,
-    height: usize,
+    pub pixels: Vec<Color>,
+    pub width: usize,
+    pub height: usize,
 }
 
 pub fn paint(layout_root: &LayoutBox, bounds: Rect) -> Canvas {
@@ -48,7 +48,7 @@ fn render_background(list: &mut DisplayList, layout_box: &LayoutBox) {
 }
 
 fn get_color(layout_box: &LayoutBox, name: &str) -> Option<Color> {
-    match layout_box.box_type {
+    match &layout_box.box_type {
         BlockNode(style) | InlineNode(style) => match style.value(name) {
             Some(Value::ColorValue(color)) => Some(color),
             _ => None,
@@ -137,7 +137,6 @@ impl Canvas {
                     }
                 }
             }
-            _ => {}
         }
     }
 }
@@ -145,8 +144,8 @@ impl Canvas {
 trait Clamp {
     fn clamp(self, lower: Self, upper: Self) -> Self;
 }
-impl Clamp for f32 {
-    fn clamp(self, lower: f32, upper: f32) -> f32 {
+impl Clamp for f64 {
+    fn clamp(self, lower: f64, upper: f64) -> f64 {
         self.max(lower).min(upper)
     }
 }

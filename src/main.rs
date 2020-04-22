@@ -1,10 +1,13 @@
+use image::{DynamicImage, ImageBuffer, ImageFormat, Pixel};
 use std::fs::OpenOptions;
-use std::io::prelude::*;
+use std::io::Read;
+use std::path::Path;
 
 pub mod css;
 pub mod dom;
 pub mod html;
 pub mod layout;
+pub mod painter;
 pub mod style;
 
 fn main() {
@@ -37,4 +40,15 @@ fn main() {
     let style_tree = style::style_tree(&root_node, &stylesheet);
     let layout_tree = layout::layout_tree(&style_tree, viewport);
     println!("{:?}", layout_tree);
+
+    /* File output */
+    let canvas = painter::paint(&layout_tree, viewport.content);
+    let (w, h) = (canvas.width as u32, canvas.height as u32);
+    let img = ImageBuffer::from_fn(w, h, move |x, y| {
+        let color = canvas.pixels[(y * w + x) as usize];
+        Pixel::from_channels(color.r, color.g, color.b, color.a)
+    });
+    let png_img = DynamicImage::ImageRgba8(img);
+    let path = Path::new("output.png");
+    png_img.save_with_format(path, ImageFormat::Png).unwrap();
 }

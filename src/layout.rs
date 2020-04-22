@@ -255,13 +255,13 @@ impl<'a> LayoutBox<'a> {
 }
 
 impl Dimensions {
-    fn padding_box(self) -> Rect {
+    pub fn padding_box(self) -> Rect {
         self.content.expanded_by(self.padding)
     }
-    fn border_box(self) -> Rect {
+    pub fn border_box(self) -> Rect {
         self.padding_box().expanded_by(self.border)
     }
-    fn margin_box(self) -> Rect {
+    pub fn margin_box(self) -> Rect {
         self.border_box().expanded_by(self.margin)
     }
 }
@@ -286,9 +286,9 @@ where
 
 impl<'a> fmt::Debug for LayoutBox<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self.dimensions);
+        write!(f, "{:?}", self.dimensions)?;
         for child in &self.children {
-            write!(f, "{:?}", child);
+            write!(f, "{:?}", child)?;
         }
         Ok(())
     }
