@@ -11,10 +11,35 @@ html {
   height: 600px;
   padding: 10px;
   margin: auto;
-  background: #ffffff;
+  background: #b0c4de;
 }
 
 body {
   width: auto;
   height: auto;
+}
+
+.outer {
+  background: #00ccff;
+  border-color: #666666;
+  border-width: 2px;
+  margin: 50px;
+  padding: 50px;
+}
+
+.inner {
+  border-color: #cc0000;
+  border-width: 4px;
+  height: 100px;
+  margin-bottom: 20px;
+  width: 400px;
+}
+
+.inner#bye {
+  background: #ffff00;
+}
+
+span#name {
+  background: red;
+  color: white;
 }
