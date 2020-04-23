@@ -49,6 +49,6 @@ fn main() {
         Pixel::from_channels(color.r, color.g, color.b, color.a)
     });
     let png_img = DynamicImage::ImageRgba8(img);
-    let path = Path::new("output.png");
+    let path = Path::new("public/output.png");
     png_img.save_with_format(path, ImageFormat::Png).unwrap();
 }
